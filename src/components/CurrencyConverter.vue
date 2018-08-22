@@ -13,7 +13,10 @@
           </v-text-field>
           <v-select
             class="mx-1"
-            label="currency">
+            :items="currencies"
+            v-model="sourceCurrency"
+            autocomplete
+            label="Source Currency">
           </v-select>
         </v-layout>
       </v-flex>
@@ -30,11 +33,16 @@
       <v-flex xs12>
         <v-layout row fill-height align-center>
           <v-text-field
-            class="mx-1">
+            class="mx-1"
+            v-model="destinationValue"
+            disabled>
           </v-text-field>
           <v-select
             class="mx-1"
-            label="currency2">
+            :items="currencies"
+            v-model="targetCurrency"
+            autocomplete
+            label="Target Currency">
           </v-select>
         </v-layout>
       </v-flex>
@@ -44,8 +52,29 @@
 </template>
 
 <script>
-export default {
+import axios from 'axios'
+import currencyLayerApiKey from '../secret.js'
 
+export default {
+  data () {
+    return {
+      currencies: [],
+      sourceCurrency: null,
+      targetCurrency: null
+    }
+  },
+  created () {
+    axios.get(`http://apilayer.net/api/list?access_key=${currencyLayerApiKey}`)
+      .then((response) => {
+        // transform API currencies response into a displayable list
+        Object.entries(response.data.currencies).map((entry) => this.currencies.push(`${entry[0]} - ${entry[1]}`))
+      })
+  },
+  computed: {
+    destinationValue () {
+      return 0
+    }
+  }
 }
 </script>
 
