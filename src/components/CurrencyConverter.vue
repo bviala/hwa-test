@@ -9,7 +9,9 @@
       <v-flex xs12>
         <v-layout row fill-height align-center>
           <v-text-field
-            class="mx-1">
+            class="mx-1"
+            v-model="sourceValue"
+            :error-messages="sourceValueErrorMessage">
           </v-text-field>
           <v-select
             class="mx-1"
@@ -23,7 +25,9 @@
 
       <v-flex xs6>
         <v-layout justify-center>
-          <v-btn large color="primary">
+          <v-btn
+            large color="primary"
+            >
             <v-icon>swap_horiz</v-icon>
             swap
           </v-btn>
@@ -34,7 +38,7 @@
         <v-layout row fill-height align-center>
           <v-text-field
             class="mx-1"
-            v-model="destinationValue"
+            v-model="targetValue"
             disabled>
           </v-text-field>
           <v-select
@@ -53,13 +57,17 @@
 
 <script>
 import axios from 'axios'
+import _ from 'lodash'
 import currencyLayerApiKey from '../secret.js'
 
 export default {
   data () {
     return {
       currencies: [],
+      sourceValue: 0,
+      sourceValueErrorMessage: [],
       sourceCurrency: null,
+      targetValue: 0,
       targetCurrency: null
     }
   },
@@ -67,12 +75,53 @@ export default {
     axios.get(`http://apilayer.net/api/list?access_key=${currencyLayerApiKey}`)
       .then((response) => {
         // transform API currencies response into a displayable list
-        Object.entries(response.data.currencies).map((entry) => this.currencies.push(`${entry[0]} - ${entry[1]}`))
+        Object.entries(response.data.currencies).map((entry) => this.currencies.push(
+          {
+            text: `${entry[0]} - ${entry[1]}`, // entry[0] = "EUR", entry[1] = "Euro"
+            value: entry[0]
+          }))
       })
+
+    this.debouncedValidateSourceValue = _.debounce(this.validateSourceValue, 300)
   },
-  computed: {
-    destinationValue () {
-      return 0
+  methods: {
+    validateSourceValue () {
+      if (!isNaN(this.sourceValue)) { // source value input correct
+        this.sourceValueErrorMessage = []
+        if (this.sourceCurrency && this.targetCurrency) {
+          this.convert()
+        }
+      } else {
+        this.sourceValueErrorMessage = "Erhm.. I can't convert this..."
+      }
+    },
+    async convert () {
+      // API direct conversion endpoint is for premium user only, so we have to get quotes for currencies and convert manually
+      const answer = await axios.get(`http://apilayer.net/api/live?
+        access_key=${currencyLayerApiKey}&
+        currencies=${this.sourceCurrency},${this.targetCurrency}
+      `)
+      const sourceQuoteKey = `USD${this.sourceCurrency}`
+      const targetQuoteKey = `USD${this.targetCurrency}`
+
+      const conversionRate = answer.data.quotes[targetQuoteKey] / answer.data.quotes[sourceQuoteKey]
+
+      this.targetValue = this.sourceValue * conversionRate
+    }
+  },
+  watch: {
+    sourceValue: function () {
+      this.debouncedValidateSourceValue()
+    },
+    sourceCurrency: function (newValue) {
+      if (newValue && this.targetCurrency) {
+        this.convert()
+      }
+    },
+    targetCurrency: function (newValue) {
+      if (this.sourceCurrency && newValue) {
+        this.convert()
+      }
     }
   }
 }
