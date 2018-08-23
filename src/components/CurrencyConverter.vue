@@ -1,64 +1,74 @@
 <template>
   <v-container fluid fill-height>
-    <v-layout
+    <v-layout column> <!-- top: title, bottom: app -->
+
+      <h1 class="display-1 primary--text mt-4">
+        Currency Converter.<br>
+        Simple.<br>
+        Straightforward.<br>
+        Beautiful.
+      </h1>
+
+      <v-layout
       :column="$vuetify.breakpoint.smAndDown"
       :align-center="$vuetify.breakpoint.mdAndUp"
-    >
+      fill-height> <!-- Source / Swap / Target, Row on desktop, Column on mobile -->
 
-      <v-flex xs12>
-        <v-layout row fill-height align-center>
-          <v-flex xs4>
-            <v-text-field
-              autofocus
-              reverse
-              class="mx-2"
-              v-model="sourceValue"
-              :error-messages="sourceValueErrorMessage">
-            </v-text-field>
-          </v-flex>
-          <v-flex xs8>
-            <v-select
-              class="mx-2"
-              :items="currencies"
-              v-model="sourceCurrency"
-              autocomplete>
-            </v-select>
-          </v-flex>
-        </v-layout>
-      </v-flex>
+        <v-flex xs12> <!-- Source value and currency -->
+          <v-layout row fill-height align-center>
+            <v-flex xs4>
+              <v-text-field
+                autofocus
+                reverse
+                class="mx-2"
+                v-model="sourceValue"
+                :error-messages="sourceValueErrorMessage">
+              </v-text-field>
+            </v-flex>
+            <v-flex xs8>
+              <v-select
+                class="mx-2"
+                :items="currencies"
+                v-model="sourceCurrency"
+                autocomplete>
+              </v-select>
+            </v-flex>
+          </v-layout>
+        </v-flex>
 
-      <v-flex xs6>
-        <v-layout justify-center fill-height align-center>
-          <v-btn
-            large color="primary"
-            @click="swap">
-            <v-icon>swap_horiz</v-icon>
-            swap
-          </v-btn>
-        </v-layout>
-      </v-flex>
+        <v-flex xs6> <!-- Swap button -->
+          <v-layout justify-center fill-height align-center>
+            <v-btn
+              large flat color="primary"
+              @click="swap">
+              <span>swap</span>
+              <v-icon>swap_horiz</v-icon>
+            </v-btn>
+          </v-layout>
+        </v-flex>
 
-      <v-flex xs12>
-        <v-layout row fill-height align-center>
-          <v-flex xs4>
-            <v-text-field
-              reverse
-              class="mx-2"
-              v-model="targetValue"
-              disabled>
-            </v-text-field>
-          </v-flex>
-          <v-flex xs8>
-            <v-select
-              class="mx-2"
-              :items="currencies"
-              v-model="targetCurrency"
-              autocomplete>
-            </v-select>
-          </v-flex>
-        </v-layout>
-      </v-flex>
+        <v-flex xs12> <!-- Target value and currency -->
+          <v-layout row fill-height align-center>
+            <v-flex xs4>
+              <v-text-field
+                reverse
+                class="mx-2"
+                v-model="targetValue"
+                disabled>
+              </v-text-field>
+            </v-flex>
+            <v-flex xs8>
+              <v-select
+                class="mx-2"
+                :items="currencies"
+                v-model="targetCurrency"
+                autocomplete>
+              </v-select>
+            </v-flex>
+          </v-layout>
+        </v-flex>
 
+      </v-layout>
     </v-layout>
   </v-container>
 </template>
@@ -80,6 +90,7 @@ export default {
     }
   },
   created () {
+    this.$vuetify.theme.primary = '#0D47A1'
     axios.get(`http://apilayer.net/api/list?access_key=${currencyLayerApiKey}`)
       .then((response) => {
         // transform API currencies response into a displayable list
@@ -101,7 +112,7 @@ export default {
           this.convert()
         }
       } else {
-        this.sourceValueErrorMessage = "Erhm.. I can't convert this..."
+        this.sourceValueErrorMessage = 'Not a number'
       }
     },
     async convert () {

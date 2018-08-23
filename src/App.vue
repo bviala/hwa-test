@@ -1,10 +1,5 @@
 <template>
   <v-app>
-    <v-toolbar
-      app>
-      <v-toolbar-title v-text="title"></v-toolbar-title>
-      <v-spacer></v-spacer>
-    </v-toolbar>
     <v-content :class="{'mx-0': $vuetify.breakpoint.smAndDown, 'mx-5': $vuetify.breakpoint.mdAndUp}" >
       <currency-converter/>
     </v-content>
