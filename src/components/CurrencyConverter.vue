@@ -2,32 +2,36 @@
   <v-container fluid fill-height>
     <v-layout
       :column="$vuetify.breakpoint.smAndDown"
-
       :align-center="$vuetify.breakpoint.mdAndUp"
     >
 
       <v-flex xs12>
         <v-layout row fill-height align-center>
-          <v-text-field
-            class="mx-1"
-            v-model="sourceValue"
-            :error-messages="sourceValueErrorMessage">
-          </v-text-field>
-          <v-select
-            class="mx-1"
-            :items="currencies"
-            v-model="sourceCurrency"
-            autocomplete
-            label="Source Currency">
-          </v-select>
+          <v-flex xs4>
+            <v-text-field
+              autofocus
+              reverse
+              class="mx-2"
+              v-model="sourceValue"
+              :error-messages="sourceValueErrorMessage">
+            </v-text-field>
+          </v-flex>
+          <v-flex xs8>
+            <v-select
+              class="mx-2"
+              :items="currencies"
+              v-model="sourceCurrency"
+              autocomplete>
+            </v-select>
+          </v-flex>
         </v-layout>
       </v-flex>
 
       <v-flex xs6>
-        <v-layout justify-center>
+        <v-layout justify-center fill-height align-center>
           <v-btn
             large color="primary"
-            >
+            @click="swap">
             <v-icon>swap_horiz</v-icon>
             swap
           </v-btn>
@@ -36,18 +40,22 @@
 
       <v-flex xs12>
         <v-layout row fill-height align-center>
-          <v-text-field
-            class="mx-1"
-            v-model="targetValue"
-            disabled>
-          </v-text-field>
-          <v-select
-            class="mx-1"
-            :items="currencies"
-            v-model="targetCurrency"
-            autocomplete
-            label="Target Currency">
-          </v-select>
+          <v-flex xs4>
+            <v-text-field
+              reverse
+              class="mx-2"
+              v-model="targetValue"
+              disabled>
+            </v-text-field>
+          </v-flex>
+          <v-flex xs8>
+            <v-select
+              class="mx-2"
+              :items="currencies"
+              v-model="targetCurrency"
+              autocomplete>
+            </v-select>
+          </v-flex>
         </v-layout>
       </v-flex>
 
@@ -64,11 +72,11 @@ export default {
   data () {
     return {
       currencies: [],
-      sourceValue: 0,
+      sourceValue: null,
       sourceValueErrorMessage: [],
-      sourceCurrency: null,
-      targetValue: 0,
-      targetCurrency: null
+      sourceCurrency: 'EUR',
+      targetValue: null,
+      targetCurrency: 'USD'
     }
   },
   created () {
@@ -83,6 +91,7 @@ export default {
       })
 
     this.debouncedValidateSourceValue = _.debounce(this.validateSourceValue, 300)
+    this.debouncedConvert = _.debounce(this.convert, 300)
   },
   methods: {
     validateSourceValue () {
@@ -106,7 +115,12 @@ export default {
 
       const conversionRate = answer.data.quotes[targetQuoteKey] / answer.data.quotes[sourceQuoteKey]
 
-      this.targetValue = this.sourceValue * conversionRate
+      this.targetValue = (this.sourceValue * conversionRate).toFixed(2)
+    },
+    swap () {
+      const swappingCurrency = this.sourceCurrency
+      this.sourceCurrency = this.targetCurrency
+      this.targetCurrency = swappingCurrency
     }
   },
   watch: {
@@ -115,12 +129,12 @@ export default {
     },
     sourceCurrency: function (newValue) {
       if (newValue && this.targetCurrency) {
-        this.convert()
+        this.debouncedConvert()
       }
     },
     targetCurrency: function (newValue) {
       if (this.sourceCurrency && newValue) {
-        this.convert()
+        this.debouncedConvert()
       }
     }
   }
