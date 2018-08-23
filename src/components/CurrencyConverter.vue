@@ -11,11 +11,14 @@
 
       <v-layout
       :column="$vuetify.breakpoint.smAndDown"
-      :align-center="$vuetify.breakpoint.mdAndUp"
       fill-height> <!-- Source / Swap / Target, Row on desktop, Column on mobile -->
 
         <v-flex xs12> <!-- Source value and currency -->
-          <v-layout row fill-height align-center>
+          <v-layout
+            row
+            fill-height
+            :align-center="$vuetify.breakpoint.mdAndUp"
+            :align-end="$vuetify.breakpoint.smAndDown">
             <v-flex xs4>
               <v-text-field
                 autofocus
@@ -48,7 +51,11 @@
         </v-flex>
 
         <v-flex xs12> <!-- Target value and currency -->
-          <v-layout row fill-height align-center>
+          <v-layout
+            row
+            fill-height
+            :align-center="$vuetify.breakpoint.mdAndUp"
+            :align-start="$vuetify.breakpoint.smAndDown">
             <v-flex xs4>
               <v-text-field
                 reverse
