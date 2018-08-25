@@ -22,19 +22,26 @@
             <v-flex xs4>
               <v-text-field
                 autofocus
+                type="number"
                 reverse
                 class="mx-2"
                 v-model="sourceValue"
-                :error-messages="sourceValueErrorMessage">
-              </v-text-field>
+                :error-messages="sourceValueErrorMessage"
+              />
             </v-flex>
             <v-flex xs8>
               <v-select
+                v-if="$vuetify.breakpoint.smAndDown"
                 class="mx-2"
                 :items="currencies"
                 v-model="sourceCurrency"
-                autocomplete>
-              </v-select>
+              />
+              <v-autocomplete
+                v-if="$vuetify.breakpoint.mdAndUp"
+                class="mx-2"
+                :items="currencies"
+                v-model="sourceCurrency"
+              />
             </v-flex>
           </v-layout>
         </v-flex>
@@ -61,16 +68,22 @@
                 reverse
                 class="mx-2"
                 v-model="targetValue"
-                disabled>
-              </v-text-field>
+                disabled
+              />
             </v-flex>
             <v-flex xs8>
               <v-select
+                v-if="$vuetify.breakpoint.smAndDown"
                 class="mx-2"
                 :items="currencies"
                 v-model="targetCurrency"
-                autocomplete>
-              </v-select>
+              />
+              <v-autocomplete
+                v-if="$vuetify.breakpoint.mdAndUp"
+                class="mx-2"
+                :items="currencies"
+                v-model="targetCurrency"
+              />
             </v-flex>
           </v-layout>
         </v-flex>
