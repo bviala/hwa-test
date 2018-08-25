@@ -128,12 +128,12 @@ export default {
         access_key=${currencyLayerApiKey}&
         currencies=${this.sourceCurrency},${this.targetCurrency}
       `)
-      const sourceQuoteKey = `USD${this.sourceCurrency}`
-      const targetQuoteKey = `USD${this.targetCurrency}`
+      const sourceQuoteKey = `USD${this.sourceCurrency}` // eg USDEUR
+      const targetQuoteKey = `USD${this.targetCurrency}` // eg USDBRL
 
-      const conversionRate = answer.data.quotes[targetQuoteKey] / answer.data.quotes[sourceQuoteKey]
+      const conversionRate = answer.data.quotes[targetQuoteKey] / answer.data.quotes[sourceQuoteKey] // USDBRL / USDEUR = EURBRL
 
-      this.targetValue = (this.sourceValue * conversionRate).toFixed(2)
+      this.targetValue = (this.sourceValue * conversionRate).toFixed(2) // keep 2 decimal
     },
     swap () {
       const swappingCurrency = this.sourceCurrency
