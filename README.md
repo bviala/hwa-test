@@ -1,21 +1,5 @@
 # hwa-test
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
+A simple currency converter built with Vue.js and Vuetify, part of a technical test for a job recruitment.  
+  
+http://bvialacurrencyconverter.surge.sh/  
