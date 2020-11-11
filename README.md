@@ -2,4 +2,4 @@
 
 A simple currency converter built with Vue.js and Vuetify, part of a technical test for a job recruitment.  
   
-http://bvialacurrencyconverter.surge.sh/  
+http://bvialacurrencyconverter.surge.sh/  (out of order)
